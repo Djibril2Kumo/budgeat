@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: budgeat_backend # Nom du conteneur pour l'application
+    ports:
+      - '8000:8000' # Mappe le port 8000 du conteneur au port 8000 de l'hôte
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/budgeat_db # URI pour se connecter à MongoDB
+    depends_on:
+      - mongo
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: budgeat_frontend # Nom du conteneur pour l'application
+    ports:
+      - '3000:19000' # Mappe le port 3000 du conteneur au port 3000 de l'hôte
+    depends_on:
+      - back
+
+  mongo:
+    image: mongo:latest
+    container_name: budgeat_mongo # Nom du conteneur pour MongoDB
+    ports:
+      - '27017:27017' # Mappe le port 27017 du conteneur au port 27017 de l'hôte
+    volumes:
+      - mongo_data:/data/db # Persiste les données de MongoDB
+
+volumes:
+  mongo_data: # Volume pour persister les données de MongoDB
